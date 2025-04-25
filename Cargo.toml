@@ -3,4 +3,8 @@ name = "gleezy"
 version = "0.1.0"
 edition = "2024"
 
+[workspace]
+members = ["lib/gleezy-lex"]
+
 [dependencies]
+gleezy-lex = { path = "lib/gleezy-lex" }
