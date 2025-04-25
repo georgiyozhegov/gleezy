@@ -8,6 +8,12 @@ macro_rules! numeric {
     };
 }
 
+macro_rules! alphabetic {
+    () => {
+        'a'..='z' | 'A'..='Z'
+    };
+}
+
 macro_rules! skip {
     () => {
         ' ' | '\t' | '\n'
@@ -38,6 +44,13 @@ impl Iterator for Lex<'_> {
                 let string = string.replace('_', "");
                 let value = string.parse().unwrap();
                 Token::Integer(value)
+            }
+            alphabetic!() => {
+                let string = self.take_while(|c| matches!(c, alphabetic!() | numeric!() | '_'));
+                match string.as_str() {
+                    "let" => Token::Let,
+                    _ => Token::Identifier(string),
+                }
             }
             '+' => self.one(Token::Plus),
             '-' => self.one(Token::Minus),

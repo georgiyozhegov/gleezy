@@ -2,7 +2,7 @@ use gleezy_lex::Lex;
 
 fn main() {
     let source = r#"
-        123+ 999-0
+        let abc123boo+goo 999
     "#;
     let source = source.chars().peekable();
     let lex = Lex::new(source);
