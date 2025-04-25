@@ -52,6 +52,12 @@ impl Iterator for Lex<'_> {
                     _ => Token::Identifier(string),
                 }
             }
+            '"' => {
+                self.source.next();
+                let string = self.take_while(|c| *c != '"');
+                self.source.next();
+                Token::String(string)
+            }
             '+' => self.one(Token::Plus),
             '-' => self.one(Token::Minus),
             '*' => self.one(Token::Star),
