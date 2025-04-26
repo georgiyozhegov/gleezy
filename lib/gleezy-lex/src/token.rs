@@ -1,12 +1,27 @@
 #[derive(Debug)]
 pub enum Token {
-    Dummy,
     Integer(i128),
     Identifier(String),
     String(String),
+    True,
+    False,
     Let,
-    Plus,
-    Minus,
-    Star,
-    Slash,
+    If,
+    Or,
+    Else,
+    Then,
+    While,
+    Do,
+    End,
+    Equal,            // =
+    Plus,             // +
+    Minus,            // -
+    Star,             // *
+    Slash,            // /
+    Greater,          // >
+    Less,             // <
+    Question,         // ?
+    Not,              // !
+    OpenParenthesis,  // (
+    CloseParenthesis, // )
 }
