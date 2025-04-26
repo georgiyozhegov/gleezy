@@ -49,6 +49,13 @@ impl Iterator for Lex<'_> {
                 let string = self.take_while(|c| matches!(c, alphabetic!() | numeric!() | '_'));
                 match string.as_str() {
                     "let" => Token::Let,
+                    "if" => Token::If,
+                    "or" => Token::Or,
+                    "else" => Token::Else,
+                    "then" => Token::Then,
+                    "while" => Token::While,
+                    "do" => Token::Do,
+                    "end" => Token::End,
                     _ => Token::Identifier(string),
                 }
             }
@@ -58,10 +65,17 @@ impl Iterator for Lex<'_> {
                 self.source.next();
                 Token::String(string)
             }
+            '=' => self.one(Token::Equal),
             '+' => self.one(Token::Plus),
             '-' => self.one(Token::Minus),
             '*' => self.one(Token::Star),
             '/' => self.one(Token::Slash),
+            '>' => self.one(Token::Greater),
+            '<' => self.one(Token::Less),
+            '?' => self.one(Token::Question),
+            '!' => self.one(Token::Not),
+            '(' => self.one(Token::OpenParenthesis),
+            ')' => self.one(Token::CloseParenthesis),
             c => panic!("unknown character: {c}"),
         };
 
