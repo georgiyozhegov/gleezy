@@ -1,0 +1,58 @@
+Это спецификация синтаксиса, по которой ведётся разработка.
+
+Слова с заглавной буквы обозначают правила/паттерны. Квадратные скобочки обозначают несколько (1 и более) элементов, идущих вместе. Всё остальное -- это ключевые слова, регулярные выражения и так далее.
+
+---
+
+Integer : 0..9 | _
+
+Identifier : a..z | A..Z | _
+
+String : "..."
+
+Boolean : true | false
+
+Body(Statement) : [Statement]
+Body(Expression) : Expression
+
+If(type) : if Expression then Body(type) end
+           | if Expression then Body(type) else Body(type)
+           | if Expression then Body(type) [or Expression then Body(type)] end
+           | if Expression then Body(type) [or Expression then Body(type)] else Body(type) end
+
+BinaryOperator : +
+                 | -
+                 | *
+                 | /
+                 | ?
+                 | <
+                 | >
+                 | >?
+                 | <?
+
+Binary : Expression BinaryOperator Expression
+
+UnaryOperator : ! | -
+
+Unary : UnaryOperator Expression
+
+Expression : Integer
+             | Identifier
+             | String
+             | Boolean
+             | If(Expression)
+             | Binary
+             | Unary
+             | (Expression)
+
+Let : let Identifier = Expression
+      | let mutable Identifier = Expression
+
+Assign : Identifier = Expression
+
+While : while Expression do Body(Statement) end
+
+Statement : Let
+            | Assign
+            | If(Statement)
+            | While
