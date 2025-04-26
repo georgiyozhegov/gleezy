@@ -39,32 +39,9 @@ impl Iterator for Lex<'_> {
         self.take_while(|c| matches!(c, skip!()));
 
         let token = match self.source.peek()? {
-            numeric!() => {
-                let string = self.take_while(|c| matches!(c, numeric!() | '_'));
-                let string = string.replace('_', "");
-                let value = string.parse().unwrap();
-                Token::Integer(value)
-            }
-            alphabetic!() => {
-                let string = self.take_while(|c| matches!(c, alphabetic!() | numeric!() | '_'));
-                match string.as_str() {
-                    "let" => Token::Let,
-                    "if" => Token::If,
-                    "or" => Token::Or,
-                    "else" => Token::Else,
-                    "then" => Token::Then,
-                    "while" => Token::While,
-                    "do" => Token::Do,
-                    "end" => Token::End,
-                    _ => Token::Identifier(string),
-                }
-            }
-            '"' => {
-                self.source.next();
-                let string = self.take_while(|c| *c != '"');
-                self.source.next();
-                Token::String(string)
-            }
+            numeric!() => self.numeric(),
+            alphabetic!() => self.alphabetic(),
+            '"' => self.string(),
             '=' => self.one(Token::Equal),
             '+' => self.one(Token::Plus),
             '-' => self.one(Token::Minus),
@@ -92,6 +69,35 @@ impl Lex<'_> {
         }
 
         output
+    }
+
+    fn numeric(&mut self) -> Token {
+        let string = self.take_while(|c| matches!(c, numeric!() | '_'));
+        let string = string.replace('_', "");
+        let value = string.parse().unwrap();
+        Token::Integer(value)
+    }
+
+    fn alphabetic(&mut self) -> Token {
+        let string = self.take_while(|c| matches!(c, alphabetic!() | numeric!() | '_'));
+        match string.as_str() {
+            "let" => Token::Let,
+            "if" => Token::If,
+            "or" => Token::Or,
+            "else" => Token::Else,
+            "then" => Token::Then,
+            "while" => Token::While,
+            "do" => Token::Do,
+            "end" => Token::End,
+            _ => Token::Identifier(string),
+        }
+    }
+
+    fn string(&mut self) -> Token {
+        self.source.next();
+        let string = self.take_while(|c| *c != '"');
+        self.source.next();
+        Token::String(string)
     }
 
     fn one(&mut self, token: Token) -> Token {
