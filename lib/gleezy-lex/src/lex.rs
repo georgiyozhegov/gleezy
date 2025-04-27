@@ -39,6 +39,7 @@ impl Iterator for Lex<'_> {
     fn next(&mut self) -> Option<Self::Item> {
         self.take_while(|c| matches!(c, skip!()));
 
+        let span = self.span.clone();
         let kind = match self.source.peek()? {
             numeric!() => self.numeric(),
             alphabetic!() => self.alphabetic(),
@@ -57,7 +58,7 @@ impl Iterator for Lex<'_> {
             c => panic!("unknown character: {c}"),
         };
 
-        Some(self.wrap(kind))
+        Some(Token::new(kind, span))
     }
 }
 
@@ -66,11 +67,6 @@ impl Lex<'_> {
         let c = self.source.next()?;
         self.span.update(c);
         Some(c)
-    }
-
-    fn wrap(&self, kind: TokenKind) -> Token {
-        let span = self.span.clone();
-        Token::new(kind, span)
     }
 
     fn take_while(&mut self, predicate: fn(&char) -> bool) -> String {
