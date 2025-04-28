@@ -93,6 +93,7 @@ impl Lex<'_> {
         let string = self.take_while(|c| matches!(c, alphabetic!() | numeric!() | '_'));
         match string.as_str() {
             "let" => TokenKind::Let,
+            "mutable" => TokenKind::Mutable,
             "if" => TokenKind::If,
             "or" => TokenKind::Or,
             "else" => TokenKind::Else,

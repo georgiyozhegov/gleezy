@@ -26,7 +26,7 @@ impl<'a> Parse<'a> {
     pub fn eat(&mut self, kind: TokenKind) {
         let next: TokenKind = self.next().into();
         if next != kind {
-            panic!("token doesn't match expected one")
+            panic!("expected {kind:?} but got {next:?}");
         }
     }
 }
@@ -35,6 +35,7 @@ impl Iterator for Parse<'_> {
     type Item = Statement;
 
     fn next(&mut self) -> Option<Self::Item> {
+        self.peek()?;
         let statement = Statement::parse(self);
         Some(statement)
     }

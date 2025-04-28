@@ -11,24 +11,45 @@ pub enum Statement {
 
 impl Parsable for Statement {
     fn parse(source: &mut Parse) -> Self {
-        match source.peek().expect("expected statement").kind() {
-            TokenKind::Let => Self::Let(Let::parse(source)),
-            TokenKind::Identifier(..) => Self::Assign(Assign::parse(source)),
-            TokenKind::While => Self::While(While::parse(source)),
-            _ => panic!("expected statement"),
+        match source.peek().and_then(|token| Some(token.into())) {
+            Some(TokenKind::Let) => Self::Let(Let::parse(source)),
+            Some(TokenKind::Identifier(..)) => Self::Assign(Assign::parse(source)),
+            Some(TokenKind::While) => Self::While(While::parse(source)),
+            kind => panic!("expected statement: {kind:?}"),
         }
     }
 }
 
 #[derive(Debug)]
 pub struct Let {
+    mutable: Mutable,
     assign: Assign,
 }
 
 impl Parsable for Let {
     fn parse(source: &mut Parse) -> Self {
+        source.eat(TokenKind::Let);
+        let mutable = Mutable::parse(source);
         let assign = Assign::parse(source);
-        Self { assign }
+        Self { mutable, assign }
+    }
+}
+
+#[derive(Debug)]
+pub enum Mutable {
+    Yes,
+    No,
+}
+
+impl Parsable for Mutable {
+    fn parse(source: &mut Parse) -> Self {
+        match source.peek().and_then(|token| Some(token.into())) {
+            Some(TokenKind::Mutable) => {
+                source.next();
+                Self::Yes
+            }
+            _ => Self::No,
+        }
     }
 }
 
@@ -40,7 +61,6 @@ pub struct Assign {
 
 impl Parsable for Assign {
     fn parse(source: &mut Parse) -> Self {
-        source.eat(TokenKind::Let);
         let name = Identifier::parse(source);
         source.eat(TokenKind::Equal);
         let value = Expression::parse(source);
@@ -57,7 +77,7 @@ impl Parsable for Identifier {
     fn parse(source: &mut Parse) -> Self {
         match source.next().into() {
             TokenKind::Identifier(name) => Self { name },
-            _ => panic!("expected identifier"),
+            kind => panic!("expected identifier: {kind:?}"),
         }
     }
 }

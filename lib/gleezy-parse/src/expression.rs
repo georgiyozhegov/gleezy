@@ -9,9 +9,9 @@ pub enum Expression {
 
 impl Parsable for Expression {
     fn parse(source: &mut Parse) -> Self {
-        match source.peek().expect("expected expression").kind() {
-            TokenKind::Integer(..) => Self::Integer(Integer::parse(source)),
-            _ => panic!("expected expression"),
+        match source.peek().and_then(|token| Some(token.into())) {
+            Some(TokenKind::Integer(..)) => Self::Integer(Integer::parse(source)),
+            kind => panic!("expected expression: {kind:?}"),
         }
     }
 }
@@ -25,7 +25,7 @@ impl Parsable for Integer {
     fn parse(source: &mut crate::Parse) -> Self {
         match source.next().into() {
             TokenKind::Integer(value) => Self { value },
-            _ => panic!("expected integer"),
+            kind => panic!("expected integer: {kind:?}"),
         }
     }
 }

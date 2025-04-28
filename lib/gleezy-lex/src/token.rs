@@ -40,6 +40,7 @@ pub enum TokenKind {
     True,
     False,
     Let,
+    Mutable,
     If,
     Or,
     Else,
