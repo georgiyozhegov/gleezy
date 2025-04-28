@@ -29,7 +29,10 @@ pub struct Lex<'a> {
 
 impl<'a> Lex<'a> {
     pub fn new(source: Source<'a>) -> Self {
-        Self { source, span: Span::new(1, 1) }
+        Self {
+            source,
+            span: Span::new(1, 1),
+        }
     }
 }
 

@@ -4,7 +4,8 @@ version = "0.1.0"
 edition = "2024"
 
 [workspace]
-members = ["lib/gleezy-lex"]
+members = ["lib/gleezy-lex", "lib/gleezy-parse"]
 
 [dependencies]
 gleezy-lex = { path = "lib/gleezy-lex" }
+gleezy-parse = { path = "lib/gleezy-parse" }

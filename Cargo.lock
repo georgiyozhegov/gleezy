@@ -7,8 +7,16 @@ name = "gleezy"
 version = "0.1.0"
 dependencies = [
  "gleezy-lex",
+ "gleezy-parse",
 ]
 
 [[package]]
 name = "gleezy-lex"
 version = "0.1.0"
+
+[[package]]
+name = "gleezy-parse"
+version = "0.1.0"
+dependencies = [
+ "gleezy-lex",
+]
