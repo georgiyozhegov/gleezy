@@ -15,19 +15,15 @@ impl Token {
         &self.kind
     }
 
+    pub fn into_kind(self) -> TokenKind {
+        self.kind
+    }
+
     pub fn span(&self) -> &Span {
         &self.span
     }
-}
 
-impl Into<TokenKind> for Token {
-    fn into(self) -> TokenKind {
-        self.kind
-    }
-}
-
-impl Into<Span> for Token {
-    fn into(self) -> Span {
+    pub fn into_span(self) -> Span {
         self.span
     }
 }

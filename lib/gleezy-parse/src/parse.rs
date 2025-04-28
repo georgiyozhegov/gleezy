@@ -24,7 +24,7 @@ impl<'a> Parse<'a> {
     }
 
     pub fn eat(&mut self, kind: TokenKind) {
-        let next: TokenKind = self.next().into();
+        let next = self.next().into_kind();
         if next != kind {
             panic!("expected {kind:?} but got {next:?}");
         }

@@ -11,7 +11,7 @@ pub enum Statement {
 
 impl Parsable for Statement {
     fn parse(source: &mut Parse) -> Self {
-        match source.peek().and_then(|token| Some(token.into())) {
+        match source.peek().and_then(|token| Some(token.into_kind())) {
             Some(TokenKind::Let) => Self::Let(Let::parse(source)),
             Some(TokenKind::Identifier(..)) => Self::Assign(Assign::parse(source)),
             Some(TokenKind::While) => Self::While(While::parse(source)),
@@ -26,12 +26,34 @@ pub struct Let {
     assign: Assign,
 }
 
+impl Let {
+    pub fn new(mutable: Mutable, assign: Assign) -> Self {
+        Self { mutable, assign }
+    }
+
+    pub fn mutable(&self) -> &Mutable {
+        &self.mutable
+    }
+
+    pub fn into_mutable(self) -> Mutable {
+        self.mutable
+    }
+
+    pub fn assign(&self) -> &Assign {
+        &self.assign
+    }
+
+    pub fn into_assign(self) -> Assign {
+        self.assign
+    }
+}
+
 impl Parsable for Let {
     fn parse(source: &mut Parse) -> Self {
         source.eat(TokenKind::Let);
         let mutable = Mutable::parse(source);
         let assign = Assign::parse(source);
-        Self { mutable, assign }
+        Self::new(mutable, assign)
     }
 }
 
@@ -43,7 +65,7 @@ pub enum Mutable {
 
 impl Parsable for Mutable {
     fn parse(source: &mut Parse) -> Self {
-        match source.peek().and_then(|token| Some(token.into())) {
+        match source.peek().and_then(|token| Some(token.into_kind())) {
             Some(TokenKind::Mutable) => {
                 source.next();
                 Self::Yes
@@ -59,12 +81,34 @@ pub struct Assign {
     value: Expression,
 }
 
+impl Assign {
+    pub fn new(name: Identifier, value: Expression) -> Self {
+        Self { name, value }
+    }
+
+    pub fn name(&self) -> &Identifier {
+        &self.name
+    }
+
+    pub fn into_name(self) -> Identifier {
+        self.name
+    }
+
+    pub fn value(&self) -> &Expression {
+        &self.value
+    }
+
+    pub fn into_value(self) -> Expression {
+        self.value
+    }
+}
+
 impl Parsable for Assign {
     fn parse(source: &mut Parse) -> Self {
         let name = Identifier::parse(source);
         source.eat(TokenKind::Equal);
         let value = Expression::parse(source);
-        Self { name, value }
+        Self::new(name, value)
     }
 }
 
@@ -73,10 +117,24 @@ pub struct Identifier {
     name: String,
 }
 
+impl Identifier {
+    pub fn new(name: String) -> Self {
+        Self { name }
+    }
+
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+
+    pub fn into_name(self) -> String {
+        self.name
+    }
+}
+
 impl Parsable for Identifier {
     fn parse(source: &mut Parse) -> Self {
-        match source.next().into() {
-            TokenKind::Identifier(name) => Self { name },
+        match source.next().into_kind() {
+            TokenKind::Identifier(name) => Self::new(name),
             kind => panic!("expected identifier: {kind:?}"),
         }
     }
@@ -88,6 +146,28 @@ pub struct While {
     body: Body,
 }
 
+impl While {
+    pub fn new(condition: Expression, body: Body) -> Self {
+        Self { condition, body }
+    }
+
+    pub fn condition(&self) -> &Expression {
+        &self.condition
+    }
+
+    pub fn into_condition(self) -> Expression {
+        self.condition
+    }
+
+    pub fn body(&self) -> &Body {
+        &self.body
+    }
+
+    pub fn into_body(self) -> Body {
+        self.body
+    }
+}
+
 impl Parsable for While {
     fn parse(source: &mut Parse) -> Self {
         source.eat(TokenKind::While);
@@ -95,13 +175,27 @@ impl Parsable for While {
         source.eat(TokenKind::Do);
         let body = Body::parse(source);
         source.eat(TokenKind::End);
-        Self { condition, body }
+        Self::new(condition, body)
     }
 }
 
 #[derive(Debug)]
 pub struct Body {
     inner: Vec<Statement>,
+}
+
+impl Body {
+    pub fn new(inner: Vec<Statement>) -> Self {
+        Self { inner }
+    }
+
+    pub fn inner(&self) -> &[Statement] {
+        &self.inner
+    }
+
+    pub fn into_inner(self) -> Vec<Statement> {
+        self.inner
+    }
 }
 
 impl Parsable for Body {
@@ -113,6 +207,6 @@ impl Parsable for Body {
             inner.push(statement);
         }
 
-        Self { inner }
+        Self::new(inner)
     }
 }
