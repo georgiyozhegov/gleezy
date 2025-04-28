@@ -45,8 +45,7 @@ Expression : Integer
              | Unary
              | (Expression)
 
-Let : let Identifier = Expression
-      | let mutable Identifier = Expression
+Let : let Assign | let mutable Assign
 
 Assign : Identifier = Expression
 
