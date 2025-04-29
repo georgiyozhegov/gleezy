@@ -1,6 +1,8 @@
 use std::{iter::Peekable, str::Chars};
 
-use crate::{Span, Token, TokenKind};
+use gleezy_report::{Report, Result, Span};
+
+use crate::{Token, TokenKind};
 
 macro_rules! numeric {
     () => {
@@ -37,7 +39,7 @@ impl<'a> Lex<'a> {
 }
 
 impl Iterator for Lex<'_> {
-    type Item = Token;
+    type Item = Result<Token>;
 
     fn next(&mut self) -> Option<Self::Item> {
         self.take_while(|c| matches!(c, skip!()));
@@ -58,10 +60,13 @@ impl Iterator for Lex<'_> {
             '!' => self.one(TokenKind::Not),
             '(' => self.one(TokenKind::OpenParenthesis),
             ')' => self.one(TokenKind::CloseParenthesis),
-            c => panic!("unknown character: {c}"),
+            c => {
+                let report = Report::UnknownCharacter { c: *c, span };
+                return Some(Err(report));
+            }
         };
 
-        Some(Token::new(kind, span))
+        Some(Ok(Token::new(kind, span)))
     }
 }
 

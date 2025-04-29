@@ -5,3 +5,5 @@ edition = "2024"
 
 [dependencies]
 gleezy-lex = { path = "../gleezy-lex" }
+gleezy-ast = { path = "../gleezy-ast" }
+gleezy-report = { path = "../gleezy-report" }

@@ -1,4 +1,4 @@
-use crate::Span;
+use gleezy_report::Span;
 
 #[derive(Clone, Debug)]
 pub struct Token {
